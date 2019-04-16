@@ -34,12 +34,21 @@ def topCategories(input, number):
     output = data.sortBy(lambda x: x[1], ascending=False)
     return output.take(number)
 
+def topRated(input, number):
+    data = prepData(input)
+    data = data.map(lambda x: (x[0],float(x[6])))
+    data = data.sortBy(lambda x: x[1], ascending=False)
+    return data.take(number)
+
+
+
 def main():
     sc = SparkContext("local[8]", "YTData")
-    data = "./data/070301/*"
+    data = "./data/*"
     input = sc.textFile(data)
     start = time.time()
-    print(topCategories(input, 10))
+    #print(topCategories(input, 10))
+    print(topRated(input, 10))
     #ranks = pageRank(input)
     #for (link, rank) in ranks.sortBy(lambda x: x[1], ascending=False).take(10):
     #    print("%s has rank: %s." % (link, rank))
