@@ -2,9 +2,10 @@ from pyspark import SparkContext, SparkConf
 from operator import add
 import time
 
-def prepData(x):
-    split = x.split('\t')
-    return [split[0],split[9:]]
+def prepData(input):
+    output = input.filter(lambda x: len(x) > 12)
+    output = output.map(lambda x: x.split('\t'))
+    return output
 
 def genGraph(x):
     return [(w,x[0]) for w in x[1]]
@@ -16,7 +17,8 @@ def computeContribs(urls, rank):
         yield (url, rank / num_urls)
 
 def pageRank(input):
-    data = input.map(prepData)
+    data = prepData(input)
+    data = data.map(lambda x: [x[0],x[9:]])
     links = data.flatMap(genGraph).distinct().groupByKey().cache()
     ranks = links.map(lambda x: (x[0], 1.0))
     for i in range(5):
@@ -25,7 +27,7 @@ def pageRank(input):
     return ranks
 
 def topCategories(input, number):
-    data = input.map(lambda x: x.split('\t'))
+    data = prepData(input)
     data = data.map(lambda x: (x[3],1))
     #data = data.groupByKey()
     data = data.reduceByKey(add)
@@ -34,7 +36,7 @@ def topCategories(input, number):
 
 def main():
     sc = SparkContext("local[8]", "YTData")
-    data = "./data_short/070222/*"
+    data = "./data/070301/*"
     input = sc.textFile(data)
     start = time.time()
     print(topCategories(input, 10))
