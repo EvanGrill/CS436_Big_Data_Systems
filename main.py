@@ -45,6 +45,12 @@ def topCategoriesByViews(input, number):
     output = data.sortBy(lambda x: x[1], ascending=False)
     return output.take(number)
 
+#added for comments
+def topComments(input,number):
+    data=input.map(lambda x: (str(x[0]), str(x[3]),int(x[8])))
+    output=data.sortBy(lambda x: x[2], ascending=False)
+    return output.take(number)
+
 
 def main():
     sc = SparkContext("local[8]", "YTData")
@@ -55,6 +61,8 @@ def main():
     catVideos = topCategoriesByVideos(input, 5)
     catViews = topCategoriesByViews(input, 5)
     rates = topRated(input, 10)
+    #added for comments
+    comments=topComments(input,10)
     #ranks = pageRank(input, 10)
     end = time.time()
     vidCount = input.count()
@@ -74,6 +82,11 @@ def main():
     print("Top 5 Categories (by Views):")
     for cat, count in catViews:
         print("Category:", cat, "Count:", count)
+    print(" ")
+
+    #added for comments
+    for id, cat, com in comments:
+        print("Video:", id, "Category:", cat, "Comments:", com)
     print(" ")
 
     print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
