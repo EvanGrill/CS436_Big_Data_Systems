@@ -29,26 +29,26 @@ def pageRank(input, number):
     return ranks.take(number)
 
 def topCategoriesByVideos(input, number):
-    data = input.map(lambda x: (x[3],1))
+    data = input.map(lambda x: (str(x[3]),1))
     #data = data.groupByKey()
     data = data.reduceByKey(add)
     output = data.sortBy(lambda x: x[1], ascending=False)
     return output.take(number)
 
 def topRated(input, number):
-    data = input.map(lambda x: (x[0],float(x[6])))
+    data = input.map(lambda x: (str(x[0]),float(x[6])))
     data = data.sortBy(lambda x: x[1], ascending=False)
     return data.take(number)
 
 def topCategoriesByViews(input, number):
-    data = input.map(lambda x: (x[3], int(x[5])))
+    data = input.map(lambda x: (str(x[3]), int(x[5])))
     data = data.reduceByKey(add)
     output = data.sortBy(lambda x: x[1], ascending=False)
     return output.take(number)
 
 #added for comments
 def topComments(input,number):
-    data=input.map(lambda x: (x[0], x[3], int(x[8])))
+    data=input.map(lambda x: (str(x[0]), str(x[3]), int(x[8])))
     output=data.sortBy(lambda x: x[2], ascending=False)
     return output.take(number)
 
@@ -74,11 +74,11 @@ def main():
     #ranks = pageRank(input, 10)
     end = time.time()
     vidCount = input.count()
-
-    #print("Top 10 Videos by PageRank:")
-    #for id, rank in ranks:
-    #    print("Video:", id, "| Rank:", rank)
-    #print(" ")
+    
+    #  print("Top 10 Videos by PageRank:")
+    #     for id, rank in ranks:
+    #        print("Video:", id, "| Rank:", rank)
+    #     print(" ")
     print("Top 10 Videos by Rating:")
     for id, rating in rates:
         print("Video:", id, "| Rating:", rating)
@@ -98,8 +98,8 @@ def main():
         print("User:", user, "| Uploads:", count)
     print(" ")
 
-    print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
-    sc.stop()
+print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
+sc.stop()
 
 if __name__ == "__main__":
     main()
