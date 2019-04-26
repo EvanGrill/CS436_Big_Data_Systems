@@ -1,6 +1,7 @@
 from pyspark import SparkContext, SparkConf
 from operator import add
 import time
+import locale
 
 def prepData(input):
     output = input.filter(lambda x: len(x) > 12)
@@ -47,6 +48,7 @@ def topCategoriesByViews(input, number):
 
 
 def main():
+    locale.setlocale(locale.LC_ALL, 'en_US')
     sc = SparkContext("local[8]", "YTData")
     data = "./data_short/*"
     input = sc.textFile(data)
@@ -61,19 +63,19 @@ def main():
 
     #print("Top 10 Videos by PageRank:")
     #for id, rank in ranks:
-    #    print("Video:", id, "Rank:", rank)
+    #    print("Video:", id, "| Rank:", rank)
     #print(" ")
     print("Top 10 Videos by Rating:")
     for id, rating in rates:
-        print("Video:", id, "Rating:", rating)
+        print("Video:", id, "| Rating:", rating)
     print(" ")
     print("Top 5 Categories (by Videos):")
     for cat, count in catVideos:
-        print("Category:", cat, "Count:", count)
+        print("Category: ", cat, "| Videos:", locale.format_string("%d", count, grouping=True))
     print(" ")
     print("Top 5 Categories (by Views):")
     for cat, count in catViews:
-        print("Category:", cat, "Count:", count)
+        print("Category: ", cat, "| Views:", locale.format_string("%d", count, grouping=True))
     print(" ")
 
     print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
