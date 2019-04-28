@@ -36,9 +36,10 @@ def topCategoriesByVideos(input, number):
     return output.take(number)
 
 def topRated(input, number):
-    data = input.map(lambda x: (str(x[0]),float(x[6])))
-    data = data.sortBy(lambda x: x[1], ascending=False)
+    data = input.map(lambda x: (str(x[0]),str(x[3]),float(x[6]),str(x[7])))
+    data = data.sortBy(lambda x: x[3], ascending=False)
     return data.take(number)
+
 
 def topCategoriesByViews(input, number):
     data = input.map(lambda x: (str(x[3]), int(x[5])))
@@ -79,9 +80,9 @@ def main():
     #     for id, rank in ranks:
     #        print("Video:", id, "| Rank:", rank)
     #     print(" ")
-    print("Top 10 Videos by Rating:")
-    for id, rating in rates:
-        print("Video:", id, "| Rating:", rating)
+    print("Top 10 Videos by Number of Rating:")
+    for id, cat, rating, num in rates:
+        print("Video:", id, "Category:", cat,   "| Stars:", rating, "| No of Rating:", num)
     print(" ")
     print("Top 5 Categories (by Videos):")
     for cat, count in catVideos:
