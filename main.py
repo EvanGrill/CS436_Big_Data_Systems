@@ -44,19 +44,20 @@ def topCategoriesByVideos(input, number=5, sort=True, all=False):
     else: return data.collect()
 
 def topRated(input, number):
-    data = input.map(lambda x: (x[0],float(x[6])))
-    data = data.sortBy(lambda x: x[1], ascending=False)
+    data = input.map(lambda x: (str(x[0]),str(x[3]),float(x[6]),str(x[7])))
+    data = data.sortBy(lambda x: x[3], ascending=False)
     return data.take(number)
 
+
 def topCategoriesByViews(input, number):
-    data = input.map(lambda x: (x[3], int(x[5])))
+    data = input.map(lambda x: (str(x[3]), int(x[5])))
     data = data.reduceByKey(add)
     output = data.sortBy(lambda x: x[1], ascending=False)
     return output.take(number)
 
 #added for comments
 def topComments(input,number):
-    data=input.map(lambda x: (x[0], x[3], int(x[8])))
+    data=input.map(lambda x: (str(x[0]), str(x[3]), int(x[8])))
     output=data.sortBy(lambda x: x[2], ascending=False)
     return output.take(number)
 
