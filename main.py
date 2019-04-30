@@ -75,44 +75,44 @@ def main():
     input = prepData(input)
     start = time.time()
     catVideos = topCategoriesByVideos(input, 5, sort=False, all=True)
-    #catViews = topCategoriesByViews(input, 5)
-    #rates = topRated(input, 10)
-    #comments = topComments(input,10)
-    #uploads = topUploaders(input, 10)
-    #ranks = pageRank(input, 10)
+    catViews = topCategoriesByViews(input, 5)
+    rates = topRated(input, 10)
+    comments = topComments(input,10)
+    uploads = topUploaders(input, 10)
+    ranks = pageRank(input, 10)
     end = time.time()
     vidCount = input.count()
 
-    #print("Top 10 Videos by PageRank:")
-    #for id, rank in ranks:
-    #    print("Video:", id, "| Rank:", rank)
-    #print(" ")
-    #print("Top 10 Videos by Rating:")
-    #for id, rating in rates:
-    #    print("Video:", id, "| Rating:", rating)
-    #print(" ")
-    #print("Top 5 Categories (by Videos):")
-    #for cat, count in catVideos:
-    #    print("Category: ", cat, "| Videos:", locale.format_string("%d", count, grouping=True))
-    #print(" ")
-    #print("Top 5 Categories (by Views):")
-    #for cat, count in catViews:
-    #    print("Category: ", cat, "| Views:", locale.format_string("%d", count, grouping=True))
-    #print(" ")
-    #for id, cat, count in comments:
-    #    print("Video:", id, "| Category:", cat, "| Comments:", locale.format_string("%d", count, grouping=True))
-    #print(" ")
-    #for user, count in uploads:
-    #    print("User:", user, "| Uploads:", count)
-    #print(" ")
+    print("Top 10 Videos by PageRank:")
+    for id, rank in ranks:
+        print("Video:", id, "| Rank:", rank)
+    print(" ")
+    print("Top 10 Videos by Rating:")
+    for id, rating in rates:
+        print("Video:", id, "| Rating:", rating)
+    print(" ")
+    print("Top 5 Categories (by Videos):")
+    for cat, count in catVideos:
+        print("Category: ", cat, "| Videos:", locale.format_string("%d", count, grouping=True))
+    print(" ")
+    print("Top 5 Categories (by Views):")
+    for cat, count in catViews:
+        print("Category: ", cat, "| Views:", locale.format_string("%d", count, grouping=True))
+    print(" ")
+    for id, cat, count in comments:
+        print("Video:", id, "| Category:", cat, "| Comments:", locale.format_string("%d", count, grouping=True))
+    print(" ")
+    for user, count in uploads:
+        print("User:", user, "| Uploads:", count)
+    print(" ")
 
-    plt.rcdefaults()
-    fig, ax = plt.subplots()
-    y_pos = np.arange(len(catVideos))
-    chart = ax.barh(y_pos, [x[1] for x in catVideos], 0.5, color="SkyBlue")
-    ax.set_yticks(y_pos)
-    ax.set_yticklabels([x[0] for x in catVideos])
-    plt.show()
+    #plt.rcdefaults()
+    #fig, ax = plt.subplots()
+    #y_pos = np.arange(len(catVideos))
+    #chart = ax.barh(y_pos, [x[1] for x in catVideos], 0.5, color="SkyBlue")
+    #ax.set_yticks(y_pos)
+    #ax.set_yticklabels([x[0] for x in catVideos])
+    #plt.show()
 
     print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
     sc.stop()
