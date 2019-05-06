@@ -52,7 +52,7 @@ def pageRank(input, number):
     for i in range(5):
         contribs = links.join(ranks).flatMap(lambda x: computeContribs(x[1][0],x[1][1]))
         ranks = contribs.reduceByKey(add).mapValues(lambda x: x * 0.85 + 0.15)
-    ranks.sortBy(lambda x: x[1], ascending=False)
+    ranks.coalesce(1).sortBy(lambda x: x[1], ascending=False)
     return ranks.take(number)
 
 def topCategoriesByVideos(input, number=-1, sort=True):
@@ -66,8 +66,8 @@ def topCategoriesByVideos(input, number=-1, sort=True):
     """ 
     data = input.map(lambda x: (x[3],1))
     data = data.reduceByKey(add)
-    if(sort): data = data.sortBy(lambda x: x[1], ascending=False)
-    else: data = data.sortBy(lambda x: x[0], ascending=False)
+    if(sort): data = data.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
+    else: data = data.sortBy(lambda x: x[0], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: return data.collect()
 
@@ -80,7 +80,7 @@ def topRated(input, number=-1):
     number -- Number of top entries to return (-1 = all)
     """
     data = input.map(lambda x: (x[0], float(x[6]), int(x[7])))
-    data = data.sortBy(lambda x: (x[1], x[2]), ascending=False)
+    data = data.sortBy(lambda x: (x[1], x[2]), ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: return data.collect()
 
@@ -95,7 +95,7 @@ def topCategoriesByViews(input, number=-1):
     """
     data = input.map(lambda x: (str(x[3]), int(x[5])))
     data = data.reduceByKey(add)
-    data = data.sortBy(lambda x: x[1], ascending=False)
+    data = data.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: return data.collect()
 
@@ -108,7 +108,7 @@ def topComments(input, number=-1):
     number -- Number of top entries to return (-1 = all)
     """
     data = input.map(lambda x: (str(x[0]), str(x[3]), int(x[8])))
-    data = data.sortBy(lambda x: x[2], ascending=False)
+    data = data.sortBy(lambda x: x[2], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: data.collect()
 
@@ -122,7 +122,7 @@ def topUploaders(input, number=-1):
     """
     data = input.map(lambda x: (x[1], 1))
     data = data.reduceByKey(add)
-    data = data.sortBy(lambda x: x[1], ascending=False)
+    data = data.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: return data.collect()
 
@@ -145,21 +145,21 @@ def main():
     start = time.time()
     #catVideos = topCategoriesByVideos(input, 5, sort=False, all=True)
     #catViews = topCategoriesByViews(input, 5)
-    rates = topRated(input, 10)
+    #rates = topRated(input, 10)
     #comments = topComments(input,10)
     #uploads = topUploaders(input, 10)
-    #ranks = pageRank(input, 10)
+    ranks = pageRank(input, 10)
     end = time.time()
     vidCount = input.count()
 
-    #print("Top 10 Videos by PageRank:")
-    #for id, rank in ranks:
-    #    print("Video:", id, "| Rank:", rank)
-    #print(" ")
-    print("Top 10 Videos by Rating:")
-    for id, rating, count in rates:
-        print("Video:", id, "| Rating:", rating, "| Ratings:", commas(count))
+    print("Top 10 Videos by PageRank:")
+    for id, rank in ranks:
+        print("Video:", id, "| Rank:", rank)
     print(" ")
+    #print("Top 10 Videos by Rating:")
+    #for id, rating, count in rates:
+    #    print("Video:", id, "| Rating:", rating, "| Ratings:", commas(count))
+    #print(" ")
     #print("Top 5 Categories (by Videos):")
     #for cat, count in catVideos:
     #    print("Category: ", cat, "| Videos:", commas(count))
