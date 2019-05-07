@@ -52,7 +52,7 @@ def pageRank(input, number):
     for i in range(5):
         contribs = links.join(ranks).flatMap(lambda x: computeContribs(x[1][0],x[1][1]))
         ranks = contribs.reduceByKey(add).mapValues(lambda x: x * 0.85 + 0.15)
-    ranks.coalesce(1).sortBy(lambda x: x[1], ascending=False)
+    ranks.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
     return ranks.take(number)
 
 def topCategoriesByVideos(input, number=-1, sort=True):
