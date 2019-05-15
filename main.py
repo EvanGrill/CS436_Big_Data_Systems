@@ -79,8 +79,11 @@ def topRated(input, number=-1):
     input -- Sanitized YouTube data
     number -- Number of top entries to return (-1 = all)
     """
-    data = input.map(lambda x: (x[0], float(x[6]), int(x[7])))
-    data = data.sortBy(lambda x: (x[1], x[2]), ascending=False, numPartitions=1)
+    data = input.filter(lambda x: float(x[6]) == 5.0)
+    data = data.map(lambda x: (x[0], int(x[7])))
+    #data = input.map(lambda x: (x[0], float(x[6]), int(x[7])))
+    data = data.reduceByKey(add)
+    data = data.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: return data.collect()
 
@@ -107,8 +110,9 @@ def topComments(input, number=-1):
     input -- Sanitized YouTube data
     number -- Number of top entries to return (-1 = all)
     """
-    data = input.map(lambda x: (str(x[0]), str(x[3]), int(x[8])))
-    data = data.sortBy(lambda x: x[2], ascending=False, numPartitions=1)
+    data = input.map(lambda x: (str(x[0]), int(x[8])))
+    data = data.reduceByKey(add)
+    data = data.sortBy(lambda x: x[1], ascending=False, numPartitions=1)
     if(not number == -1): return data.take(number)
     else: data.collect()
 
@@ -143,37 +147,38 @@ def main():
     input = sc.textFile(data)
     input = prepData(input)
     start = time.time()
-    #catVideos = topCategoriesByVideos(input, 5, sort=False, all=True)
-    catViews = topCategoriesByViews(input, 5)
-    #rates = topRated(input, 10)
+    #catVideos = topCategoriesByVideos(input, 5, sort=True)
+    #catViews = topCategoriesByViews(input, 5)
+    #rates = topRated(input, 20)
     #comments = topComments(input,10)
-    #uploads = topUploaders(input, 10)
+    uploads = topUploaders(input, 10)
     #ranks = pageRank(input, 10)
     end = time.time()
-    vidCount = input.count()
+    #vidCount = input.count()
 
     #print("Top 10 Videos by PageRank:")
     #for id, rank in ranks:
     #    print("Video:", id, "| Rank:", rank)
     #print(" ")
     #print("Top 10 Videos by Rating:")
-    #for id, rating, count in rates:
-    #    print("Video:", id, "| Rating:", rating, "| Ratings:", commas(count))
+    #for id, count in rates:
+    #    print("Video:", id, "| Rating: 5.0 | Ratings:", commas(count))
     #print(" ")
     #print("Top 5 Categories (by Videos):")
     #for cat, count in catVideos:
     #    print("Category: ", cat, "| Videos:", commas(count))
     #print(" ")
-    print("Top 5 Categories (by Views):")
-    for cat, count in catViews:
-        print("Category: ", cat, "| Views:", commas(count))
+    #print("Top 5 Categories (by Views):")
+    #for cat, count in catViews:
+    #    print("Category: ", cat, "| Views:", commas(count))
+    #print(" ")
+    #print("Top 10 Videos (by Comments):")
+    #for id, count in comments:
+    #    print("Video:", id, "| Comments:", commas(count))
+    #print(" ")
+    for user, count in uploads:
+        print("User:", user, "| Uploads:", commas(count))
     print(" ")
-    #for id, cat, count in comments:
-    #    print("Video:", id, "| Category:", cat, "| Comments:", commas(count))
-    #print(" ")
-    #for user, count in uploads:
-    #    print("User:", user, "| Uploads:", commas(count))
-    #print(" ")
 
     #plt.rcdefaults()
     #fig, ax = plt.subplots()
@@ -183,7 +188,7 @@ def main():
     #ax.set_yticklabels([x[0] for x in catVideos])
     #plt.show()
 
-    print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
+    #print( str(vidCount) + " videos processed in " + str(end - start) + " seconds." )
     sc.stop()
 
 if __name__ == "__main__":
