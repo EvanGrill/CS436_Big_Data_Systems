@@ -2,8 +2,8 @@ from pyspark import SparkContext, SparkConf
 from operator import add
 import time
 import locale
-import matplotlib.pyplot as plt
-import numpy as np
+#import matplotlib.pyplot as plt
+#import numpy as np
 
 def prepData(input):
     """
@@ -138,24 +138,24 @@ def commas(input):
 
 def main():
     sc = SparkContext("local[8]", "YTData")
-    data = "./data_short/*"
+    data = "./data/*"
     #data = "./data/*"
     input = sc.textFile(data)
     input = prepData(input)
     start = time.time()
     #catVideos = topCategoriesByVideos(input, 5, sort=False, all=True)
-    #catViews = topCategoriesByViews(input, 5)
+    catViews = topCategoriesByViews(input, 5)
     #rates = topRated(input, 10)
     #comments = topComments(input,10)
     #uploads = topUploaders(input, 10)
-    ranks = pageRank(input, 10)
+    #ranks = pageRank(input, 10)
     end = time.time()
     vidCount = input.count()
 
-    print("Top 10 Videos by PageRank:")
-    for id, rank in ranks:
-        print("Video:", id, "| Rank:", rank)
-    print(" ")
+    #print("Top 10 Videos by PageRank:")
+    #for id, rank in ranks:
+    #    print("Video:", id, "| Rank:", rank)
+    #print(" ")
     #print("Top 10 Videos by Rating:")
     #for id, rating, count in rates:
     #    print("Video:", id, "| Rating:", rating, "| Ratings:", commas(count))
@@ -164,10 +164,10 @@ def main():
     #for cat, count in catVideos:
     #    print("Category: ", cat, "| Videos:", commas(count))
     #print(" ")
-    #print("Top 5 Categories (by Views):")
-    #for cat, count in catViews:
-    #    print("Category: ", cat, "| Views:", commas(count))
-    #print(" ")
+    print("Top 5 Categories (by Views):")
+    for cat, count in catViews:
+        print("Category: ", cat, "| Views:", commas(count))
+    print(" ")
     #for id, cat, count in comments:
     #    print("Video:", id, "| Category:", cat, "| Comments:", commas(count))
     #print(" ")
